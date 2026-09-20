@@ -1,0 +1,151 @@
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+PROGRAM PLC_PRG
+VAR
+	(***FUNCTION BLOCK***)
+	(*InputProgramValueMapping*)
+	InputProgramValueMapping_FUNC: InputProgramValueMapping;
+	(*SWD*)
+	SWD_FUNC: SWD;
+	(*SPEED*)
+	SPEED_FUNC: SPEED;
+	(*emergency func*)
+	EMERGENCY_STOP_FUNC: EMERGENCY_STOP;
+
+	(*停机/降速通道处理，封装于 SLD_SHD_Channels FB*)
+	SLD_SHD_CHANNELS_FUNC: SLD_SHD_Channels;
+
+	SWITCHES_ETC_FUNC: SWITCHES_ETC;
+	MISCELLANEOUS_FUNC: MISCELLANEOUS;
+	OutputProgramValueMapping_FUNC: OutputProgramValueMapping;
+
+	(*ENGINE_TRIPPED*)
+	ENGINE_TRIPPED_FUNC:	ENGINE_TRIPPED;
+
+
+	(***temp val***)
+	SLD_LAMP :BOOL := FALSE;
+	SHD_LAMP :BOOL := FALSE;
+	SLD_SIGN :BOOL := FALSE;
+	SHD_SIGN :BOOL := FALSE;
+	HORN :BOOL := FALSE;
+
+	(*BR_HORN_ECR_AUT ....SR input*)
+	SRIN1: BOOL;
+	SRIN2: BOOL;
+
+	SRIns: SR;
+
+	(*BOOT  time*)
+	BOOT_DELAY_TIMER: TON;
+END_VAR
+
+(* @END_DECLARATION := '0' *)
+BOOT_DELAY_TIMER(IN := TRUE, PT := t#1ms);
+
+IF	BOOT_DELAY_TIMER.Q = FALSE
+THEN
+	RETURN;
+END_IF
+
+
+(****程序临时变量 ****)
+(*INIT  VAR*)
+SLD_LAMP  := FALSE;
+OMD_SLD_LAMP := FALSE;
+NORMAL_SLD_LAMP := FALSE;
+OMD_SLD_SIGN := FALSE;
+NORMAL_SLD_SIGN  :=  FALSE;
+SHD_LAMP := FALSE;
+SLD_SIGN  := FALSE;
+SHD_SIGN := FALSE;
+HORN := FALSE;
+SRIN1 := FALSE;
+SRIN2 := FALSE;
+
+
+InputProgramValueMapping_FUNC;
+
+SWD_FUNC;
+
+SPEED_FUNC;
+
+EMERGENCY_STOP_FUNC;
+
+SWITCHES_ETC_FUNC;
+
+(*-----------------------SLD_SHD_PROCESS-----------------------*)
+SLD_SHD_CHANNELS_FUNC;
+SHD_SIGN        := SLD_SHD_CHANNELS_FUNC.SHD_SIGN_OUT;
+SLD_SIGN        := SLD_SHD_CHANNELS_FUNC.SLD_SIGN_OUT;
+HORN            := SLD_SHD_CHANNELS_FUNC.HORN_OUT;
+SHD_LAMP        := SLD_SHD_CHANNELS_FUNC.SHD_LAMP_OUT;
+SLD_LAMP        := SLD_SHD_CHANNELS_FUNC.SLD_LAMP_OUT;
+OMD_SLD_LAMP    := SLD_SHD_CHANNELS_FUNC.OMD_SLD_LAMP_OUT;
+NORMAL_SLD_LAMP := SLD_SHD_CHANNELS_FUNC.NORMAL_SLD_LAMP_OUT;
+OMD_SLD_SIGN    := SLD_SHD_CHANNELS_FUNC.OMD_SLD_SIGN_OUT;
+NORMAL_SLD_SIGN := SLD_SHD_CHANNELS_FUNC.NORMAL_SLD_SIGN_OUT;
+
+
+(************ 总信号合成 *******************)
+SLOWDOWN := SLD_SIGN;
+SHUTDOWN := SHD_SIGN OR EMERG_STOP;
+SLOWDOWN_ADDR_113 := SHUTDOWN OR  SLOWDOWN;
+
+
+(* 本来是发给主机的 *)
+SLD_REQUESTED_BX_7321C  :=  SLD_LAMP  OR  SLD_EXPTED_TO_UNIC;
+SHD_EXPECTED_BX_7321C  :=  SHD_EXPTED_TO_UNIC;
+
+
+H_SHUTDOWN_BR_ECRAUT := SHD_EXPECTED_BX_7321C;
+H_SLOWDOWN_BR_ECR_AUT := SLD_REQUESTED_BX_7321C;
+
+
+(*******************蜂鸣报警与报警确认***********************)
+SRIN1 := HORN OR EMERG_STOP;
+SRIN2 := BR_CEN_ALARM_ACKN_PUSHB
+		  OR BR_PORT_ALARM_ACKN_PUSHB
+		  OR BR_STBD_ALARM_ACKN_PUSHB
+		  OR CR_ALARM_ACKN_PUSHB
+		  OR ALARM_ACKN_BX_7331C;
+
+SRIns (SET1 := SRIN1, RESET := SRIN2);
+BR_HORN_ECR_AUT_HORN := SRIns.Q1;(*---------------HMI HORN-------------*)
+HORN_BX_7321C := BR_HORN_ECR_AUT_HORN;
+
+
+
+(************** 试灯功能 ******************)
+IF  ECR_LAMP_TEST_SIGNAL = TRUE THEN
+	CR_ALARM_ACKN_LAMP := TRUE;
+ELSE
+	CR_ALARM_ACKN_LAMP := FALSE;
+END_IF
+
+IF  BR_LAMP_TEST_SIGNAL = TRUE THEN
+	BR_CEN_ALARM_ACKN_LAMP := TRUE;
+ELSE
+	BR_CEN_ALARM_ACKN_LAMP := FALSE;
+END_IF
+
+
+
+(*-----------------------------MISCELLANEOUS-----------------------------*)
+MISCELLANEOUS_FUNC;
+
+
+(*-----------------------------ENGINE_TRIPPED-----------------------------*)
+ENGINE_TRIPPED_FUNC;
+
+
+(*-----------------------------OutputProgramValueMapping-----------------------------*)
+OutputProgramValueMapping_FUNC;
+
+
+(*-----------------------------CAN OUT from ESS to UNIC-----------------------------*)
+
+END_PROGRAM

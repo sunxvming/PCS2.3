@@ -1,0 +1,49 @@
+
+(* @NESTEDCOMMENTS := 'Yes' *)
+(* @PATH := '' *)
+(* @OBJECTFLAGS := '0, 8' *)
+(* @SYMFILEFLAGS := '2048' *)
+FUNCTION_BLOCK SWD
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+(* @END_DECLARATION := '0' *)
+(*----------------SWD_SLD  ----------------------*)
+
+IF  SLD_OVERRIDE  THEN   SWD_swd_me_ess_61 := 7;  (* SLD_OVERRIDE  *)
+ELSIF  OMD_SLD_OVERRIDE  THEN   SWD_swd_me_ess_61 := 8;  (* OMD_SLD_OVERRIDE  *)
+ELSIF  SLOWDOWN_ADDR_113  THEN   SWD_swd_me_ess_61 := 3;  (* SLOWDOWN  *)
+ELSIF  SLD_REQUESTED_BX_7321C THEN   SWD_swd_me_ess_61 := 11;  (* SLD REQUESTED  *)
+ELSE   SWD_swd_me_ess_61:=0;(*me slowdown = 0 UKN*)
+END_IF;
+
+(*--------------------------------------------------SHD  SWD ---------------------------------------------------------------------------*)
+
+IF   OVERSPEED_NOT_LATCHED  THEN   SWD_swd_me_ess_shd_0 := 5;  (* OVERSPEED  *)
+ELSIF  SHD_OVERRIDE  THEN   SWD_swd_me_ess_shd_0 := 2;  (* SHD_OVERRIDE  *)
+ELSIF  EMERG_STOP AND NOT SHUTDOWN THEN   SWD_swd_me_ess_shd_0 := 4;  (* EMERG_STOP  *)
+ELSIF  SHUTDOWN AND NOT OVERSPEED_NOT_LATCHED   THEN   SWD_swd_me_ess_shd_0:=1;(* SHUTDOWN  *)
+ELSIF  SHD_EXPECTED_BX_7321C   THEN   SWD_swd_me_ess_shd_0:=3;(* SHUTDOWN  EXPECTED *)
+ELSIF ENGINE_TRIPPED_P   THEN   SWD_swd_me_ess_shd_0:=6;	(*ENGINE  TRIPPED*)
+ELSE   SWD_swd_me_ess_shd_0:=0;(*me shutdown = 0 UKN*)
+END_IF;
+
+(*------------------------- SCS_swd_me_ess_2_61  Safety System Reset --------------------------------------------*)
+IF  NOT ( BR_CTRL  OR  ECR_CTRL_P) THEN       SCS_swd_me_ess_2_61:=1;(*NOT_ALLOWED   1*)
+ELSIF    BR_CTRL  OR  ECR_CTRL_P   THEN       SCS_swd_me_ess_2_61:=2;(*ALLOWED  2*)
+ELSE                                          SCS_swd_me_ess_2_61:=0;  (*UNKNOWN    0*)
+END_IF;
+
+(*SC_swd_me_ess_61   *)
+IF     SC_swd_me_ess_61=2     THEN  RESET_SAFETY_SYSTEM_PB:=TRUE ;
+ELSIF  SC_swd_me_ess_61=0     THEN  RESET_SAFETY_SYSTEM_PB:=FALSE   ;
+ELSE  RESET_SAFETY_SYSTEM_PB:=FALSE;
+END_IF;
+
+
+BR_ECR_RESET_SAFETY_SYSTEM_PUSHB := RESET_SAFETY_SYSTEM_PB;
+
+END_FUNCTION_BLOCK

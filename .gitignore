@@ -1,0 +1,20 @@
+
+
+*.precompilecache
+*.opt
+*.~u
+*.bootinfo
+*.bootinfo_guids
+*.compileinfo
+.backup/
+.core
+
+# Ignore xls temporary files
+~$*
+*.SDB
+*.SYM
+*.ini
+*.ci
+*.ECI
+*.ri
+*.DFR
