@@ -210,12 +210,8 @@ VAR_GLOBAL
 	ECR_CANCEL_SHD_LMP_P: BOOL;
 
 
-
-	TO_RCS_SHUTDOWN: BOOL;
 	TO_RCS_SHUTDOWN_EXPECTED: BOOL;
 	TO_RCS_SHUTDOWN_OVERRIDE: BOOL;
-	TO_RCS_SLOWDOWN_REQUESTED: BOOL;
-	TO_RCS_SLOWDOWN_EXPECTED: BOOL;
 	TO_RCS_OVERSPEED: BOOL;
 
 	BRIDGE_ENGINE_SPEED_METER: REAL;
@@ -466,46 +462,47 @@ VAR_GLOBAL
 	RESET_SAFETY_SYSTEM_PB:   BOOL; (*proess0036*)
 
 
-	(*********************************************Intelligent Ship PCS HW Signal list -------11/02/2016***********************************************)
+	(********************************************* HW Signal **********************************************)
 	(*-------------------AI-------------------*)
-	ESS_ENGINE_SPEED_2_ANA	AT  %IW51: WORD;    (*PROSSST5104C*)  (*48*)
-	ESS_ENGINE_SPEED_1A_HIGH AT  %IW50: WORD; (*PROSSST5111S*) (*WORD*)
-	ESS_ENGINE_SPEED_1B_LOW AT  %IW49: WORD; (*PROSSST5112S*)	(*WORD*)
+	ESS_ENGINE_SPEED_1B_LOW AT  %IW1: WORD; (*PROSSST5112S*)	
+	ESS_ENGINE_SPEED_1A_HIGH AT  %IW2: WORD; (*PROSSST5111S*) 
 
+	ESS_ENGINE_SPEED_2_ANA	AT  %IW51: WORD;    (*PROSSST5104C*)  (*48*)
 
 	(*-------------------AO-------------------*)
 	MCR_ENGINE_SPEED_SAFETY_METER: REAL; (*PROESS1001*)
 	LOC_E25_ENGINE_SPEED_SAFETY_METER: REAL; (*PROESS1002*)
 
 	(*-------------------DI-------------------*)
-	BR_CANCEL_OMD_SLD						   AT	%IX53.13: BOOL;(*DI-1-3*)  
-	BR_CANCEL_SLD							   AT	%IX53.12: BOOL;(*DI-1-4*)  
-	BR_CANCEL_SHD							   AT	%IX54.0: BOOL;(*DI-1-5*)   
-	BR_EMERG_STOP_SWITCH					   AT	%IX53.10: BOOL;(*DI-1-11*)
-	ECR_CANCEL_OMD_SLD					       AT	%IX54.2: BOOL;(*DI-1-8*)	
-	ECR_CANCEL_SLD							   AT	%IX54.1: BOOL;(*DI-1-9*)  
-	ECR_CANCEL_SHD							   AT	%IX54.5: BOOL;(*DI-1-10*)	
-	ECR_AUT_EMERG_STOP_SWITCH                  AT   %IX54.8: BOOL;(*DI-1-12*) 
-	LOC_EMERG_STOP_SWITCH                      AT   %IX54.8: BOOL;(*DI-1-13*)
-	MAIN_BRG_OIL_PRESS_VERY_LOW_SHD			   AT	%IX53.2: BOOL;(*DI-1-14*)
-	TURBOCHG_1_BRG_OIL_PRESS_LOW_SHD	       AT	%IX53.2: BOOL;(*DI-1-15*)
-	AIR_SPRING_PRESS_LOW_SHD                   AT   %IX54.13: BOOL;(*DI-1-16*)
-	AMS_MAIN_BRG_OIL_PRESS_LOW_SLD             AT   %IX54.13: BOOL; (*DI-2-4*)(*AMS主机滑油进口压力低降速反馈*)
-	AMS_TURBOCHG_BRG_OIL_PRESS_LOW_SLD         AT   %IX54.13: BOOL; (*DI-2-5*)(*AMS增压器滑油进口压力低降速反馈*)
-	CYL_COOL_WATER_PRESS_INLET_LOW_SHD  	   AT   %IX53.0: BOOL;  (*DI-2-6*)  (*50.0*)
-	AMS_AIR_SPRING_PRESS_LOW_SLD               AT   %IX54.13: BOOL; (*DI-2-7*)(*AMS排气阀空气弹簧压力低降速反馈*)
-	AMS_TURBOCHG_SPEED_HIGH_SLD                AT   %IX54.13: BOOL; (*DI-2-8*)(*AMS增压器转速高降速反馈*)
-	AMS_CYL_COOL_WATER_TEMP_HIGH_SLD           AT   %IX54.13: BOOL; (*DI-2-9*)(*AMS缸套冷却水出口温度高降速反馈*)
-	AMS_PISTON_COOL_OIL_TEMP_HIGH_SLD          AT   %IX54.13: BOOL; (*DI-2-10*)(*AMS缸活塞冷却油出口温度高降速反馈*)
-	AMS_THRUST_BRG_OIL_TEMP_HIGH_SLD           AT   %IX54.13: BOOL; (*DI-2-11*)(*AMS推力轴承滑油出口温度高降速反馈*)
-	AMS_TURBOCHG_OIL_TEMP_HIGH_SLD             AT   %IX54.13: BOOL; (*DI-2-12*)(*AMS增压器滑油出口温度高降速反馈*)
-	AMS_CYL_EXHAUST_TEMP_HIGH_SLD              AT   %IX54.13: BOOL; (*DI-2-13*)(*AMS缸排气温度降速反馈*)
-	AMS_TURBOCHG_INLET_EXHAUST_TEMP_HIGH_SLD   AT   %IX54.13: BOOL; (*DI-2-14*)(*AMS增压器进口排气温度降速反馈*)
-	AMS_SCAV_BOX_FIRE_TEMP_HIGH_SLD            AT   %IX54.13: BOOL; (*DI-2-15*)(*AMS缸扫气箱着火温度高降速反馈*)
-	Thrust_Bearing_Temp_fore_side_HIGH_SHD	   AT	%IX53.4: BOOL;  (*DI-2-1*)
-	OILMIST_CONCEN_IN_CRANKCASE_HIGH_SLD	   AT	%IX53.6: BOOL;  (*DI-2-2*)
-	LUBRICATOR_OIL_FLOW_FAIL_SLD               AT   %IX54.13: BOOL; (*DI-2-3*)(*注油器断流降速反馈*)
-	GOVERNOR_SYS_FAULT_SLD                     AT   %IX54.13: BOOL; (*      *)(*调速器系统异常报警降速反馈*)		
+	BR_CANCEL_OMD_SLD						   AT	%IX18.2: BOOL;(*DI-1-3*)  
+	BR_CANCEL_SLD							   AT	%IX18.3: BOOL;(*DI-1-4*)  
+	BR_CANCEL_SHD							   AT	%IX18.4: BOOL;(*DI-1-5*)   
+	BR_EMERG_STOP_SWITCH					   AT	%IX18.10: BOOL;(*DI-1-11*)
+	ECR_CANCEL_OMD_SLD					       AT	%IX18.7: BOOL;(*DI-1-8*)	
+	ECR_CANCEL_SLD							   AT	%IX18.8: BOOL;(*DI-1-9*)  
+	ECR_CANCEL_SHD							   AT	%IX18.9: BOOL;(*DI-1-10*)	
+	ECR_AUT_EMERG_STOP_SWITCH                  AT   %IX18.11: BOOL;(*DI-1-12*) 
+	LOC_EMERG_STOP_SWITCH                      AT   %IX18.12: BOOL;(*DI-1-13*)
+	MAIN_BRG_OIL_PRESS_VERY_LOW_SHD			   AT	%IX18.13: BOOL;(*DI-1-14*)
+	TURBOCHG_1_BRG_OIL_PRESS_LOW_SHD	       AT	%IX18.14: BOOL;(*DI-1-15*)
+	AIR_SPRING_PRESS_LOW_SHD                   AT   %IX18.115: BOOL;(*DI-1-16*)
+
+	AMS_MAIN_BRG_OIL_PRESS_LOW_SLD             AT   %IX19.3: BOOL; (*DI-2-4*)(*AMS主机滑油进口压力低降速反馈*)
+	AMS_TURBOCHG_BRG_OIL_PRESS_LOW_SLD         AT   %IX19.4: BOOL; (*DI-2-5*)(*AMS增压器滑油进口压力低降速反馈*)
+	CYL_COOL_WATER_PRESS_INLET_LOW_SHD  	   AT   %IX19.5: BOOL;  (*DI-2-6*)  (*50.0*)
+	AMS_AIR_SPRING_PRESS_LOW_SLD               AT   %IX19.6: BOOL; (*DI-2-7*)(*AMS排气阀空气弹簧压力低降速反馈*)
+	AMS_TURBOCHG_SPEED_HIGH_SLD                AT   %IX19.7: BOOL; (*DI-2-8*)(*AMS增压器转速高降速反馈*)
+	AMS_CYL_COOL_WATER_TEMP_HIGH_SLD           AT   %IX19.8: BOOL; (*DI-2-9*)(*AMS缸套冷却水出口温度高降速反馈*)
+	AMS_PISTON_COOL_OIL_TEMP_HIGH_SLD          AT   %IX19.9: BOOL; (*DI-2-10*)(*AMS缸活塞冷却油出口温度高降速反馈*)
+	AMS_THRUST_BRG_OIL_TEMP_HIGH_SLD           AT   %IX19.10: BOOL; (*DI-2-11*)(*AMS推力轴承滑油出口温度高降速反馈*)
+	AMS_TURBOCHG_OIL_TEMP_HIGH_SLD             AT   %IX19.11: BOOL; (*DI-2-12*)(*AMS增压器滑油出口温度高降速反馈*)
+	AMS_CYL_EXHAUST_TEMP_HIGH_SLD              AT   %IX19.12: BOOL; (*DI-2-13*)(*AMS缸排气温度降速反馈*)
+	AMS_TURBOCHG_INLET_EXHAUST_TEMP_HIGH_SLD   AT   %IX19.13: BOOL; (*DI-2-14*)(*AMS增压器进口排气温度降速反馈*)
+	AMS_SCAV_BOX_FIRE_TEMP_HIGH_SLD            AT   %IX19.14: BOOL; (*DI-2-15*)(*AMS缸扫气箱着火温度高降速反馈*)
+	Thrust_Bearing_Temp_fore_side_HIGH_SHD	   AT	%IX19.0: BOOL;  (*DI-2-1*)
+	OILMIST_CONCEN_IN_CRANKCASE_HIGH_SLD	   AT	%IX19.1: BOOL;  (*DI-2-2*)
+	LUBRICATOR_OIL_FLOW_FAIL_SLD               AT   %IX19.2: BOOL; (*DI-2-3*)(*注油器断流降速反馈*)
+	GOVERNOR_SYS_FAULT_SLD                     AT   %IX19.15: BOOL; (*      *)(*调速器系统异常报警降速反馈*)		
 	
 	
  
@@ -584,9 +581,11 @@ VAR_GLOBAL
 	LOC_EMERG_STOP_LMP							AT	%QX18.10: BOOL;(*DO-1-11*)	
 	
 
-	
-
 	FUEL_SHD_PILOT_VALVE_DRIVE      AT	%QX55.0: BOOL;(*PROSSZV7061S*)
+	TO_RCS_SHUTDOWN: BOOL;
+	TO_RCS_SLOWDOWN_REQUESTED: BOOL;
+	TO_RCS_SLOWDOWN_EXPECTED: BOOL;	
+
 	BR_PORT_WING_EMERG_STOP_LMP: BOOL;(*PROESS1031*)
 	BR_STBD_WING_EMERG_STOP_LMP: BOOL;(*PROESS1032*)
 
